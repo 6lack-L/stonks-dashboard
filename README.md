@@ -1,10 +1,12 @@
 <div align="center">
 
-# Stonks Dashboard
+<h1> Stonks Dashboard </h1>
 
 [![GitHub stars](https://img.shields.io/github/stars/pierridotite/stonks-dashboard?style=social)](https://github.com/praffall/stonks-dashboard/stargazers)
 [![npm version](https://img.shields.io/npm/v/stonks-dashboard.svg)](https://www.npmjs.com/package/stonks-dashboard)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
+
+<a href="https://www.producthunt.com/posts/stonks-dashboard?utm_source=badge-featured&utm_medium=badge&utm_souce=badge-stonks-dashboard" target="_blank"><img src="https://api.producthunt.com/widgets/embed-image/v1/featured.svg?post_id=stonks-dashboard&theme=light" alt="Stonks Dashboard - Real-time crypto & stock dashboard for your terminal | Product Hunt" style="width: 200px; height: 54px;" width="250" height="54" /></a>
 
 **Minimal real-time market dashboard for your terminal**
 
@@ -76,6 +78,6 @@ Requests are rate-limited and cached (`cache.json`). Crypto details cache ~30 mi
 
 MIT - See [LICENSE](LICENSE)
 
-## Stargazers
+## Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=pierridotite/stonks-dashboard&type=Date&theme=dark)](https://star-history.com/#pierridotite/stonks-dashboard&Date)

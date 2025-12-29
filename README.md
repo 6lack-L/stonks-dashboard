@@ -61,6 +61,8 @@ Edit `config.json` to customize:
 }
 ```
 
+NOTE: Stocks on the London Stock Exchange can be added by appending .L (e.g. BARC.L), they will be displayed in pounds or pence depending on whether they are above £1
+
 ## Data Sources
 
 - **Crypto:** CoinGecko API

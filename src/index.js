@@ -171,8 +171,26 @@ class StonksDashboard {
     this.refreshDisplay();
   }
 
-  formatPrice(price) {
-    if (!price || isNaN(price)) return '$0.00';
+  formatPrice(price, symbol = '') {
+    if (!price || isNaN(price)) {
+      // Return appropriate zero value based on currency
+      return symbol.endsWith('.L') ? '£0.00' : '$0.00';
+    }
+    
+    // Handle London Stock Exchange stocks (ending in .L)
+    // Yahoo Finance returns LSE prices in pence, so we need to convert
+    if (symbol.endsWith('.L')) {
+      if (price >= 100) {
+        // Show as pounds: £1.23 (convert pence to pounds)
+        const pounds = price / 100;
+        return `£${pounds.toFixed(2)}`;
+      } else {
+        // Show as pence with decimal places: 2.05p
+        return `${price.toFixed(2)}p`;
+      }
+    }
+    
+    // Default USD formatting for other stocks/crypto
     if (price >= 1000) {
       return `$${price.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
     } else if (price >= 1) {
@@ -214,7 +232,7 @@ class StonksDashboard {
         const isSelected = this.assetsData.indexOf(asset) === this.selectedIndex;
         const prefix = isSelected ? '>' : ' ';
         const symbol = `${prefix}${asset.symbol}`;
-        const price = this.formatPrice(asset.price);
+        const price = this.formatPrice(asset.price, asset.symbol);
         const change = this.formatChange(asset.change);
         
         if (isSelected) {
@@ -354,14 +372,14 @@ class StonksDashboard {
       content = `
  {bold}{cyan-fg}${typeIcon} ${asset.symbol}{/cyan-fg}{/bold} {gray-fg}${typeLabel}{/gray-fg} ${asset.rank ? `#${asset.rank}` : ''}
  ${'─'.repeat(38)}
- {bold}Price{/bold}        ${this.formatPrice(asset.price)}
+ {bold}Price{/bold}        ${this.formatPrice(asset.price, asset.symbol)}
  {bold}24h{/bold}          {${changeColor}-fg}${this.formatChange(asset.change24h || asset.change)}{/${changeColor}-fg}
- {bold}Open{/bold}         ${this.formatPrice(asset.open)}
+ {bold}Open{/bold}         ${this.formatPrice(asset.open, asset.symbol)}
  ${'─'.repeat(38)}
- {bold}High 24h{/bold}     ${this.formatPrice(asset.high)}
- {bold}Low 24h{/bold}      ${this.formatPrice(asset.low)}
- {bold}ATH{/bold}          ${this.formatPrice(asset.high52w)}
- {bold}ATL{/bold}          ${this.formatPrice(asset.low52w)}
+ {bold}High 24h{/bold}     ${this.formatPrice(asset.high, asset.symbol)}
+ {bold}Low 24h{/bold}      ${this.formatPrice(asset.low, asset.symbol)}
+ {bold}ATH{/bold}          ${this.formatPrice(asset.high52w, asset.symbol)}
+ {bold}ATL{/bold}          ${this.formatPrice(asset.low52w, asset.symbol)}
  ${'─'.repeat(38)}
  {bold}Mkt Cap{/bold}      ${this.formatNumber(asset.marketCap)}
  {bold}Volume 24h{/bold}   ${this.formatNumber(asset.volume)}
@@ -374,15 +392,15 @@ class StonksDashboard {
       content = `
  {bold}{cyan-fg}${typeIcon} ${asset.symbol}{/cyan-fg}{/bold} {gray-fg}${typeLabel}{/gray-fg}
  ${'─'.repeat(38)}
- {bold}Price{/bold}        ${this.formatPrice(asset.price)}
+ {bold}Price{/bold}        ${this.formatPrice(asset.price, asset.symbol)}
  {bold}Change{/bold}       {${changeColor}-fg}${changeText}{/${changeColor}-fg}
- {bold}Open{/bold}         ${this.formatPrice(asset.open)}
- {bold}Prev Close{/bold}   ${this.formatPrice(asset.previousClose)}
+ {bold}Open{/bold}         ${this.formatPrice(asset.open, asset.symbol)}
+ {bold}Prev Close{/bold}   ${this.formatPrice(asset.previousClose, asset.symbol)}
  ${'─'.repeat(38)}
- {bold}High{/bold}         ${this.formatPrice(asset.high)}
- {bold}Low{/bold}          ${this.formatPrice(asset.low)}
- {bold}52wk High{/bold}    ${this.formatPrice(asset.high52w)}
- {bold}52wk Low{/bold}     ${this.formatPrice(asset.low52w)}
+ {bold}High{/bold}         ${this.formatPrice(asset.high, asset.symbol)}
+ {bold}Low{/bold}          ${this.formatPrice(asset.low, asset.symbol)}
+ {bold}52wk High{/bold}    ${this.formatPrice(asset.high52w, asset.symbol)}
+ {bold}52wk Low{/bold}     ${this.formatPrice(asset.low52w, asset.symbol)}
  ${'─'.repeat(38)}
  {bold}Volume{/bold}       ${this.formatNumber(asset.volume)}
  {bold}Avg Vol{/bold}      ${this.formatNumber(asset.avgVolume)}

@@ -81,12 +81,12 @@ export class DataService {
   async fetchCryptoData(symbol, coinId, days = 7) {
     const chartKey = `crypto-${symbol}-${days}`;
     const detailKey = `detail-${coinId}`;
-    
+
     // Use cached chart if valid
     if (this.isCacheValid(chartKey)) {
       return { ...this.cache.get(chartKey), fromCache: true };
     }
-    
+
     try {
       // Fetch chart sequentially with delay
       const chartResponse = await axiosGetWithRetry(`https://api.coingecko.com/api/v3/coins/${coinId}/market_chart`, {
@@ -176,7 +176,7 @@ export class DataService {
 
     } catch (error) {
       console.error(`[Crypto] ${symbol}: ${error.message}`);
-      
+
       if (this.cache.has(chartKey)) {
         return { ...this.cache.get(chartKey), error: true, fromCache: true };
       }
@@ -205,16 +205,16 @@ export class DataService {
 
   async fetchStockData(symbol, days = 7) {
     const cacheKey = `stock-${symbol}-${days}`;
-    
+
     // Return cached data if valid
     if (this.isCacheValid(cacheKey)) {
       return { ...this.cache.get(cacheKey), fromCache: true };
     }
-    
-    let range = '7d';
+
+    let range = '1d';
     let interval = '1d';
     if (days <= 1) {
-      range = '1d';
+      range = '1m';
       interval = '1h';
     } else if (days <= 7) {
       range = '7d';
@@ -226,7 +226,7 @@ export class DataService {
       range = '3mo';
       interval = '1d';
     }
-    
+
     try {
       // Fetch chart data
       const response = await axios.get(`https://query1.finance.yahoo.com/v8/finance/chart/${symbol}`, {
@@ -252,9 +252,9 @@ export class DataService {
           timestamps.push(typeof ts === 'number' ? ts * 1000 : Date.now());
         }
       }
-      
+
       if (closePrices.length === 0) closePrices.push(0);
-      
+
       const currentPrice = meta.regularMarketPrice || closePrices[closePrices.length - 1] || 0;
       const previousClose = meta.chartPreviousClose || closePrices[0] || currentPrice;
       const change = previousClose > 0 ? ((currentPrice - previousClose) / previousClose) * 100 : 0;
@@ -294,7 +294,7 @@ export class DataService {
           headers: { 'User-Agent': 'Mozilla/5.0' },
           timeout: 5000
         });
-        
+
         const quoteData = quoteResponse.data.quoteResponse?.result?.[0];
         if (quoteData) {
           data.marketCap = quoteData.marketCap || 0;
@@ -314,7 +314,7 @@ export class DataService {
 
     } catch (error) {
       console.error(`[Stock] ${symbol}: ${error.message}`);
-      
+
       if (this.cache.has(cacheKey)) {
         return { ...this.cache.get(cacheKey), error: true, fromCache: true };
       }
@@ -343,7 +343,7 @@ export class DataService {
 
   async fetchAllAssets(tickers, cryptoIds, days = 7) {
     const results = [];
-    
+
     // Sequential fetching to respect rate limits
     for (const ticker of tickers) {
       const coinId = cryptoIds[ticker];
@@ -353,8 +353,7 @@ export class DataService {
         results.push(await this.fetchStockData(ticker, days));
       }
     }
-    
+
     return results;
   }
 }
-    
